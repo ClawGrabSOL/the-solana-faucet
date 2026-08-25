@@ -1,11 +1,7 @@
 {
-  "functions": {
-    "api/index.js": {
-      "maxDuration": 30,
-      "includeFiles": "public/**"
-    }
-  },
+  "framework": null,
+  "outputDirectory": "public",
   "rewrites": [
-    { "source": "/(.*)", "destination": "/api" }
+    { "source": "/captcha", "destination": "/api/captcha" }
   ]
 }

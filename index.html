@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.1//EN"
+ "http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd">
+<!-- Design by www.yomena.de, originally from http://www.opendesigns.org/design/tomotoe/ -->
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+    <title>Free Solana</title>
+    <meta name="author" content="sam"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="title" content="The Solana Faucet" />
+    <meta name="description" content="The Solana Faucet gives you a little free SOL so you can try this newfangled cryptocurrency." />
+    <link rel="stylesheet" type="text/css" href="/fountain.css" />
+    <link rel="image_src" href="/faucet.png" />
+  </head>
+  <body>
+    <div class="title">
+      <h1>Free Solana</h1>
+    </div>
+    <div class="leftNav">
+        <p>◎ unfunded</p>
+      <ul>
+        <li>Other Sites:</li>
+        <li>
+          <a href="https://solana.com">solana.com</a>
+        </li>
+        <li>
+          <a href="https://phantom.app">phantom.app</a>
+        </li>
+      </ul>
+    </div>
+    <div class="main">
+
+  <h2>Get Solana from the Solana Faucet</h2>
+  <form action="/api/claim" method="post">
+   <p>I'm giving away 0.01 SOL per visitor; just solve the captcha then enter your Solana receiving address and press Get&nbsp;Some:</p>
+     <div class="captcha-row">
+       <img src="/api/captcha" width="170" height="52" alt="captcha" />
+       <label for="id_captcha"> Captcha:</label>
+       <input id="id_captcha" type="text" name="captcha" maxlength="8" autocomplete="off" />
+     </div>
+     <p><label for="id_address">Your Solana Address:</label> <input id="id_address" type="text" name="address" maxlength="48" value="" />
+      <input type="submit" value="Get Some!"/></p>
+  </form>
+
+      <h2>What are Solanas?</h2>
+      <p>Solanas are a new kind of money. They aren't created or controlled by a government
+         (like dollars or euros). Anybody who wants to can run the software and be part of
+         the network. Visit <a href="https://solana.com">solana.com</a> for the geeky details.</p>
+
+      <h2>How do I get a Solana Receiving Address?</h2>
+      <p>Install a wallet such as <a href="https://phantom.app">Phantom</a> or
+         <a href="https://solflare.com">Solflare</a> (or use the
+         <a href="https://docs.solana.com/cli">Solana CLI</a> if you live in a terminal).
+         Open it up. It will show you your receiving address, a long string of letters and numbers.
+         Paste that here. A wallet you control is best.</p>
+
+      <h2>I've got Solana; how can I help?</h2>
+      <p>Send some to the Solana Faucet at
+        address <code><b>DqWPN6zptwMsUda2La6rgQSnfNubkhJJhvVvV3zYSNYv</b></code> and they'll be given away.
+        It may take a little while for your donation to show up in the amount available.
+      </p>
+
+      <h2>What's the catch?</h2>
+      <p>No catch. I want Solana to be something you can actually try, not just read about.
+      A few coins to start with is enough to send a transaction and see how it feels.<br/>
+      -- sam
+      </p>
+    </div>
+    <div class="footer">
+      Homage to <a href="https://en.wikipedia.org/wiki/Bitcoin_faucet">Gavin Andresen's 2010 Bitcoin Faucet</a>
+      (this is not that site, and Gavin did not build this one)
+      | Design: <a href="http://www.yomena.de/">www.yomena.de</a>
+      | Photo: original garden tap for this page
+    </div>
+  </body>
+</html>

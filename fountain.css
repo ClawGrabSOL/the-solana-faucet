@@ -1,0 +1,161 @@
+/* Design bones from the tomotoe template (www.yomena.de), CC BY 3.0.
+   Paths adapted for the Solana Faucet. Please leave the original credit intact. */
+
+body {
+margin: 0px;
+padding: 0px;
+background-color: #ffffff;
+background-image: url(/faucet.png);
+background-repeat: no-repeat;
+background-position: 5px 30px;
+font-family: Arial, Helvetica, sans-serif;
+font-size: 90%;
+color: #575757;
+}
+
+.main a {
+color: #6D96B8;
+text-decoration: none;
+}
+
+a:hover {
+text-decoration: underline;
+}
+
+h1 {
+font-size: 60px;
+color: silver;
+}
+
+h2 {
+font-size: 150%;
+}
+
+hr {
+ border: 0px; /* Für Firefox und Opera */
+ border-top: dotted 1px #6D96B8;
+ border-bottom: transparent;
+}
+
+ul, li {
+list-style-type: square;
+}
+
+input {
+border-bottom: 1px solid silver;
+border-top: 0px;
+border-left: 0px;
+border-right: 0px;
+background-color: white;
+font-family: Arial, Helvetica, sans-serif;
+font-size: 100%;
+}
+input[type="submit"] {
+border: 1px solid silver;
+background-color: white;
+padding: 2px 8px;
+cursor: pointer;
+}
+
+.leftNav li {
+list-style-type: none;
+list-style-image: none;
+margin: 0px;
+padding: 0px;
+line-height: 1.9em;
+}
+
+.leftNav ul {
+margin: 0px;
+padding: 0px;
+}
+
+.title {
+position: relative;
+left: 150px;
+width: 600px;
+top: 10px;
+text-align: center;
+}
+
+.leftNav {
+position: relative;
+top: 120px;
+text-align: left;
+margin: 0px 0px 0px 10px;
+width: 150px;
+}
+
+.leftNav li a {
+color: silver;
+font-size: 130%;
+text-decoration: none;
+padding: 0px;
+font-weight: bold;
+}
+
+.leftNav li a:hover {
+padding: 5px;
+text-decoration: none;
+}
+
+.main {
+clear: left;
+position: relative;
+top: -100px;
+left: 180px;
+width: 75%;
+}
+
+.footer {
+position: relative;
+top: -80px;
+text-align: right;
+margin: 20px;
+font-size: 80%;
+color: gray;
+}
+
+.footer a {
+color: silver;
+text-decoration: none;
+}
+
+.footer a:hover {
+text-decoration: underline;
+}
+
+#id_address {
+width: 28em;
+}
+
+#id_captcha {
+width: 7em;
+letter-spacing: 0.12em;
+}
+
+.captcha-row {
+margin: 10px 0 6px 0;
+}
+
+.captcha-row img {
+vertical-align: middle;
+border: 1px solid silver;
+background: #eee;
+}
+
+.msg {
+margin: 0 0 12px 0;
+}
+
+.msg-err {
+color: #a33;
+}
+
+.msg-ok {
+color: #2d5a2d;
+}
+
+code b {
+font-size: 105%;
+}
