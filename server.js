@@ -10,7 +10,6 @@ const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
 const express = require("express");
-const session = require("express-session");
 const {
   Connection,
   Keypair,
@@ -33,8 +32,9 @@ if (PAYOUT_LAMPORTS !== Math.round(PAYOUT_SOL * LAMPORTS_PER_SOL)) {
 const PORT = parseInt(process.env.PORT || "3456", 10);
 const RPC_URL = process.env.RPC_URL || "";
 const CLAIM_WINDOW_MS = parseInt(process.env.CLAIM_WINDOW_MS || String(24 * 60 * 60 * 1000), 10);
-const DATA_DIR = path.join(__dirname, "data");
+const DATA_DIR = process.env.VERCEL ? "/tmp/solana-faucet-data" : path.join(__dirname, "data");
 const CLAIMS_PATH = path.join(DATA_DIR, "claims.json");
+const CAPTCHA_SECRET = process.env.SESSION_SECRET || process.env.CAPTCHA_SECRET || "solana-faucet-dev-secret";
 const DONATE_PLACEHOLDER = "DqWPN6zptwMsUda2La6rgQSnfNubkhJJhvVvV3zYSNYv";
 
 const app = express();
@@ -42,15 +42,6 @@ app.set("trust proxy", 1);
 app.disable("x-powered-by");
 
 app.use(express.urlencoded({ extended: false, limit: "8kb" }));
-app.use(
-  session({
-    name: "faucet.sid",
-    secret: process.env.SESSION_SECRET || "solana-faucet-dev-secret",
-    resave: false,
-    saveUninitialized: true,
-    cookie: { httpOnly: true, sameSite: "lax", maxAge: 2 * 60 * 60 * 1000 },
-  })
-);
 app.use(express.static(path.join(__dirname, "public"), { maxAge: 0 }));
 
 // --- wallet / rpc ----------------------------------------------------------
@@ -233,25 +224,43 @@ function captchaSvg(text) {
   return parts.join("");
 }
 
-function issueCaptcha(req) {
+function hmacHex(s) {
+  return crypto.createHmac("sha256", CAPTCHA_SECRET).update(s).digest("hex");
+}
+
+function readCookie(req, name) {
+  const header = req.headers.cookie || "";
+  for (const part of header.split(";")) {
+    const idx = part.indexOf("=");
+    if (idx === -1) continue;
+    const k = part.slice(0, idx).trim();
+    if (k === name) return decodeURIComponent(part.slice(idx + 1).trim());
+  }
+  return "";
+}
+
+function issueCaptcha(res) {
   const text = randomText(5);
-  req.session.captcha = text;
-  req.session.captchaAt = Date.now();
+  const exp = Date.now() + 15 * 60 * 1000;
+  const mac = hmacHex(exp + ":" + text);
+  const secure = process.env.VERCEL ? "; Secure" : "";
+  res.setHeader("Set-Cookie", "fc=" + encodeURIComponent(exp + "." + mac) + "; HttpOnly; Path=/; SameSite=Lax; Max-Age=900" + secure);
   return text;
 }
 
 function checkCaptcha(req, guess) {
-  const expected = req.session && req.session.captcha;
-  const at = req.session && req.session.captchaAt;
-  req.session.captcha = null;
-  req.session.captchaAt = null;
-  if (!expected || !guess) return false;
-  if (at && Date.now() - at > 15 * 60 * 1000) return false;
-  const a = String(expected).trim().toUpperCase();
-  const b = String(guess).trim().toUpperCase();
-  if (a.length !== b.length) return false;
+  const raw = readCookie(req, "fc");
+  const b = String(guess || "").trim().toUpperCase();
+  if (!raw || !b) return false;
+  const dot = raw.indexOf(".");
+  if (dot < 1) return false;
+  const exp = parseInt(raw.slice(0, dot), 10);
+  const mac = raw.slice(dot + 1);
+  if (!exp || Date.now() > exp) return false;
+  const expected = hmacHex(exp + ":" + b);
+  if (expected.length !== mac.length) return false;
   try {
-    return crypto.timingSafeEqual(Buffer.from(a), Buffer.from(b));
+    return crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(mac));
   } catch {
     return false;
   }
@@ -383,7 +392,7 @@ async function page(req, extra) {
 }
 
 app.get("/captcha", function (req, res) {
-  const text = issueCaptcha(req);
+  const text = issueCaptcha(res);
   const svg = captchaSvg(text);
   res.set("Content-Type", "image/svg+xml");
   res.set("Cache-Control", "no-store, no-cache, must-revalidate");
@@ -462,10 +471,14 @@ app.post("/", async function (req, res) {
   }
 });
 
-app.listen(PORT, "0.0.0.0", function () {
-  const funded = faucetKeypair ? faucetKeypair.publicKey.toBase58() : "(no key — dry / unfunded)";
-  console.log("The Solana Faucet listening on http://127.0.0.1:" + PORT);
-  console.log("Payout: " + PAYOUT_SOL + " SOL (" + PAYOUT_LAMPORTS + " lamports)");
-  console.log("Faucet wallet: " + funded);
-  console.log("RPC: " + (RPC_URL || "(not set)"));
-});
+module.exports = app;
+
+if (require.main === module) {
+  app.listen(PORT, "0.0.0.0", function () {
+    const funded = faucetKeypair ? faucetKeypair.publicKey.toBase58() : "(no key — dry / unfunded)";
+    console.log("The Solana Faucet listening on http://127.0.0.1:" + PORT);
+    console.log("Payout: " + PAYOUT_SOL + " SOL (" + PAYOUT_LAMPORTS + " lamports)");
+    console.log("Faucet wallet: " + funded);
+    console.log("RPC: " + (RPC_URL || "(not set)"));
+  });
+}
